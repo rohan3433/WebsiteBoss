@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-// Import templates
+
 import PharmacyTemplate from "../components/templates/PharmacyTemplate";
 import CosmeticsTemplate from "../components/templates/CosmeticsTemplate";
 import GroceryTemplate from "../components/templates/GroceryTemplate";
@@ -88,7 +88,7 @@ export default function Website() {
       default:
         return (
           <OthersTemplate website={website} primaryColor={primaryColor} />
-        ); // Default fallback
+        ); 
     }
   };
 

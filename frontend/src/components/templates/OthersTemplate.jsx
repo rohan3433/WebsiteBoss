@@ -1,7 +1,7 @@
 import React from "react";
 
 const OthersTemplate = ({ website, primaryColor }) => {
-  // Safely handle data - ensure all required properties exist with defaults
+ 
   const safeWebsite = {
     companyName: website?.companyName || "Company Name",
     customIndustry: website?.customIndustry || "business",
@@ -14,7 +14,7 @@ const OthersTemplate = ({ website, primaryColor }) => {
     products: Array.isArray(website?.products) ? website.products : [],
   };
 
-  // Determine the industry type to display
+
   const industryType = safeWebsite.customIndustry;
 
   return (
@@ -34,9 +34,8 @@ const OthersTemplate = ({ website, primaryColor }) => {
         </div>
       </header>
 
-      {/* Main content */}
+
       <main className="flex-grow">
-        {/* Hero section */}
         <section className="bg-gray-100 py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold mb-4">
@@ -52,7 +51,7 @@ const OthersTemplate = ({ website, primaryColor }) => {
           </div>
         </section>
 
-        {/* Products section */}
+
         <section className="py-12">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold mb-6">Our Products</h2>
@@ -99,7 +98,6 @@ const OthersTemplate = ({ website, primaryColor }) => {
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="bg-gray-800 text-white py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between">

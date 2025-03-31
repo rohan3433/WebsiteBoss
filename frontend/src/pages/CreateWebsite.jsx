@@ -13,7 +13,7 @@ export default function CreateWebsite() {
   const [form, setForm] = useState({
     industryType: "pharmacy",
     companyName: "",
-    customIndustry: "", // Ensure this is initialized
+    customIndustry: "", 
     colorTheme: "blue",
     contactInfo: {
       address: "",
@@ -64,17 +64,17 @@ export default function CreateWebsite() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create a clean copy of the form data
+   
     const formData = JSON.parse(JSON.stringify(form));
 
-    // Always ensure required fields exist
+ 
     if (!formData.customIndustry) {
       formData.customIndustry = formData.industryType === "others" 
         ? "Custom Business" 
         : formData.industryType;
     }
     
-    // Ensure products array contains valid entries
+  
     formData.products = formData.products.map(product => ({
       name: product.name || "Product",
       sku: product.sku || "SKU-" + Math.floor(Math.random() * 10000),
@@ -82,7 +82,6 @@ export default function CreateWebsite() {
       description: product.description || "No description provided."
     }));
     
-    // Ensure contact info contains valid entries
     formData.contactInfo = {
       address: formData.contactInfo.address || "Address not provided",
       phone: formData.contactInfo.phone || "Phone not provided",
@@ -103,7 +102,7 @@ export default function CreateWebsite() {
     } catch (error) {
       console.error("Error creating website:", error);
       
-      // Log detailed error information
+
       if (error.response) {
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
@@ -134,7 +133,7 @@ export default function CreateWebsite() {
     { value: "cosmetics", label: "Cosmetics" },
     { value: "grocery", label: "Grocery Store" },
     { value: "clothing", label: "Clothing Store" },
-    { value: "others", label: "Others" }, // Changed to lowercase "others"
+    { value: "others", label: "Others" }, 
   ];
 
   const colorOptions = [
