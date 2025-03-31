@@ -2,11 +2,18 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+import PharmacyTemplate from "../components/templates/PharmacyTemplate";
+import CosmeticsTemplate from "../components/templates/CosmeticsTemplate";
+import GroceryTemplate from "../components/templates/GroceryTemplate";
+import ClothingTemplate from "../components/templates/ClothingTemplate";
+import OthersTemplate from "../components/templates/OthersTemplate";
+
 export default function CreateWebsite() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     industryType: "pharmacy",
     companyName: "",
+    customIndustry: "", // Ensure this is initialized
     colorTheme: "blue",
     contactInfo: {
       address: "",
@@ -56,18 +63,66 @@ export default function CreateWebsite() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Create a clean copy of the form data
+    const formData = JSON.parse(JSON.stringify(form));
+
+    // Always ensure required fields exist
+    if (!formData.customIndustry) {
+      formData.customIndustry = formData.industryType === "others" 
+        ? "Custom Business" 
+        : formData.industryType;
+    }
+    
+    // Ensure products array contains valid entries
+    formData.products = formData.products.map(product => ({
+      name: product.name || "Product",
+      sku: product.sku || "SKU-" + Math.floor(Math.random() * 10000),
+      price: product.price || "0.00",
+      description: product.description || "No description provided."
+    }));
+    
+    // Ensure contact info contains valid entries
+    formData.contactInfo = {
+      address: formData.contactInfo.address || "Address not provided",
+      phone: formData.contactInfo.phone || "Phone not provided",
+      email: formData.contactInfo.email || "Email not provided"
+    };
+
     try {
+      console.log("Submitting form data:", formData);
+
       const res = await axios.post(
         "http://localhost:5000/api/websites/create",
-        form
+        formData
       );
+
       alert("Website Created!");
-     
       const websiteId = res.data.websiteURL.split("/").pop();
       navigate(`/website/${websiteId}`);
     } catch (error) {
       console.error("Error creating website:", error);
-      alert("Failed to create website!");
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+        console.error("Response headers:", error.response.headers);
+        
+        alert(
+          `Failed to create website: ${
+            error.response.data.message || error.message
+          }`
+        );
+      } else if (error.request) {
+        console.error("Request made but no response received:", error.request);
+        alert("Failed to create website! No response received from server.");
+      } else {
+        console.error("Error setting up request:", error.message);
+        alert(
+          "Failed to create website! Please check your network connection."
+        );
+      }
     }
   };
 
@@ -78,8 +133,8 @@ export default function CreateWebsite() {
     { value: "pharmacy", label: "Pharmacy" },
     { value: "cosmetics", label: "Cosmetics" },
     { value: "grocery", label: "Grocery Store" },
-    { value: "restaurant", label: "Restaurant" },
     { value: "clothing", label: "Clothing Store" },
+    { value: "others", label: "Others" }, // Changed to lowercase "others"
   ];
 
   const colorOptions = [
@@ -87,6 +142,40 @@ export default function CreateWebsite() {
     { value: "green", label: "Green" },
     { value: "red", label: "Red" },
   ];
+
+  const getPrimaryColor = (colorTheme) => {
+    switch (colorTheme) {
+      case "blue":
+        return "bg-blue-600";
+      case "green":
+        return "bg-green-600";
+      case "red":
+        return "bg-red-600";
+      default:
+        return "bg-blue-600";
+    }
+  };
+
+
+  const renderPreview = () => {
+
+    const previewData = { ...form };
+    const primaryColor = getPrimaryColor(previewData.colorTheme);
+
+    switch (previewData.industryType) {
+      case "pharmacy":
+        return <PharmacyTemplate website={previewData} primaryColor={primaryColor} />;
+      case "cosmetics":
+        return <CosmeticsTemplate website={previewData} primaryColor={primaryColor} />;
+      case "grocery":
+        return <GroceryTemplate website={previewData} primaryColor={primaryColor} />;
+      case "clothing":
+        return <ClothingTemplate website={previewData} primaryColor={primaryColor} />;
+      case "others":
+      default:
+        return <OthersTemplate website={previewData} primaryColor={primaryColor} />;
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
@@ -110,7 +199,6 @@ export default function CreateWebsite() {
                 required
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Industry Type
@@ -130,6 +218,22 @@ export default function CreateWebsite() {
               </select>
             </div>
 
+            {form.industryType === "others" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Specify Your Industry
+                </label>
+                <input
+                  type="text"
+                  name="customIndustry"
+                  value={form.customIndustry || ""}
+                  placeholder="Specify your industry type"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Color Theme
@@ -148,7 +252,6 @@ export default function CreateWebsite() {
                 ))}
               </select>
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 About Content
@@ -162,7 +265,6 @@ export default function CreateWebsite() {
                 onChange={handleChange}
               />
             </div>
-
             <div className="pt-4">
               <button
                 type="button"

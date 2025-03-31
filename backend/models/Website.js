@@ -8,7 +8,7 @@ const WebsiteSchema = new mongoose.Schema({
   industryType: {
     type: String,
     required: true,
-    enum: ["pharmacy", "cosmetics", "grocery", "restaurant", "clothing"],
+    enum: ["pharmacy", "cosmetics", "grocery", "clothing","others"],
   },
   colorTheme: {
     type: String,
